@@ -1,0 +1,179 @@
+import vk_api, json, requests, apiai
+from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
+from vk_api.longpoll import VkLongPoll, VkEventType
+from vk_api.utils import get_random_id
+import datetime
+
+
+
+###
+### Авторизация бота в группе
+###
+
+vk_session = vk_api.VkApi(token=' ')
+vk = vk_session.get_api()
+longpoll = VkBotLongPoll(vk_session, ' ')
+longpollS = VkLongPoll(vk_session)
+session = requests.Session()
+
+###
+### Клавиатура бота
+###
+
+def get_button(label, color, payload=""):
+    return {
+            "action": {
+            "type": "text",
+            "payload": json.dumps(payload),
+            "label": label
+            },
+            "color": color
+            }
+keyboard = {
+    "one_time": False,
+    "buttons": [
+        [get_button(label="О стажировках", color="negative", payload="{\"button\": \"1\"}"),
+         get_button(label="Наши проекты", color="primary", payload="{\"button\": \"2\"}")],
+        [get_button(label="Мероприятия", color="positive", payload="{\"button\": \"3\"}"),
+         get_button(label="Хочу поехать!", color="default", payload="{\"button\": \"4\"}")],
+        [get_button(label="Диалог с Ботом", color="positive")]
+    ]}
+keyboard = json.dumps(keyboard, ensure_ascii=False).encode('utf-8')
+keyboard = str(keyboard.decode('utf-8'))
+
+keyboardOppo = {
+    "one_time": True,
+    "buttons": [
+        [get_button(label="Global V", color="negative")],
+        [get_button(label="Global E", color="primary", payload="{\"button\": \"2\"}")],
+        [get_button(label="Global T", color="positive")]
+    ]}
+keyboardOppo = json.dumps(keyboardOppo, ensure_ascii=False).encode('utf-8')
+keyboardOppo = str(keyboardOppo.decode('utf-8'))
+
+keyboardBotOpen = {
+    "one_time": False,
+    "buttons": [
+        [get_button(label="Выйти из диалога", color="positive")]
+    ]}
+keyboardBotOpen = json.dumps(keyboardBotOpen, ensure_ascii=False).encode('utf-8')
+keyboardBotOpen = str(keyboardBotOpen.decode('utf-8'))
+
+
+
+
+def mainlog():
+    print("ЛогБот тут", '\n')
+    for event in longpoll.listen():
+        ### Дата события
+        today = datetime.datetime.today()
+        dataForSite = today.strftime('%Y-%m-%d')
+        if event.type == VkBotEventType.MESSAGE_NEW:###ЕСЛИ ПОСТУПИЛО НОВОЕ СООБЩЕНИЕ
+            Message_New = open('D:\Projects\MassMessages.txt', 'a')
+            print('Входящее сообщение:', today.strftime(" %H:%M %d.%m.%Y"), '\n',###ЗАПИСАТЬ В ФАЙЛ
+                  'От: https://vk.com/id', event.obj.from_id, '\n', 'Текст: ',
+                  event.obj.text, sep='', end='\n\n', file=Message_New)
+            Message_New.close()
+            print('Входящее сообщение:', today.strftime(" %H:%M %d.%m.%Y"), '\n',###НА ЭКРАН
+                  'От: https://vk.com/id', event.obj.from_id, '\n', 'Текст: ',
+                  event.obj.text, sep='', end='\n\n')
+
+            request = event.object.text
+            if request == "Начать":
+                vk.messages.send(user_id=event.obj.from_id, keyboard=keyboard, random_id=get_random_id(), message='Привет')
+            elif request == "начать":
+                vk.messages.send(user_id=event.obj.from_id, keyboard=keyboard, random_id=get_random_id(), message='Привет')
+            elif request == "Start":
+                vk.messages.send(user_id=event.obj.from_id, keyboard=keyboard, random_id=get_random_id(), message='Привет')
+            elif request == "start":
+                vk.messages.send(user_id=event.obj.from_id, keyboard=keyboard, random_id=get_random_id(), message='Привет')
+            elif request == "Старт":
+                vk.messages.send(user_id=event.obj.from_id, keyboard=keyboard, random_id=get_random_id(), message='Привет')
+            elif request == "старт":
+                vk.messages.send(user_id=event.obj.from_id, keyboard=keyboard, random_id=get_random_id(), message='Привет')
+
+
+            elif request == "Наши проекты":
+                vk.messages.send(user_id=event.obj.from_id, random_id=get_random_id(), message='Раздел в разработке2')
+
+
+
+            elif request == "О стажировках":
+                vk.messages.send(user_id=event.obj.from_id, keyboard=keyboardOppo, random_id=get_random_id(), message='На какой срок ты бы хотел уехать?')
+
+            elif request == "Global Volunteer":
+                vk.messages.send(user_id=event.obj.from_id, keyboard=keyboard, random_id=get_random_id(),
+                message='https://type=1&earliest_start_date='+dataForSite+'&sort=relevance')
+            elif request == "Global Entrepreneur":
+                vk.messages.send(user_id=event.obj.from_id, keyboard=keyboard, random_id=get_random_id(),
+                message='https://type=5&earliest_start_date='+dataForSite+'&sort=relevance')
+            elif request == "Global Talent":
+                vk.messages.send(user_id=event.obj.from_id, keyboard=keyboard, random_id=get_random_id(),
+                message='https://type=2&earliest_start_date='+dataForSite+'&sort=relevance')
+
+
+
+            elif request == "Мероприятия":
+                vk.messages.send(user_id=event.obj.from_id, random_id=get_random_id(), message='Раздел в разработке3')
+
+
+
+            elif request == "Хочу поехать!":
+                vk.messages.send(user_id=event.obj.from_id,
+                random_id=get_random_id(), message="Оставляй заявку и с тобой свяжутся в течение 24 часов. Переходи: https://vk.com/aiesec_vrn?w=app5708398_-15485470")
+
+
+            elif request == "Диалог с Ботом":
+                vk.messages.send(user_id=event.obj.from_id, keyboard=keyboardBotOpen, random_id=get_random_id(), message='Сейчас,мы его разбудим')
+                for event in longpollS.listen():
+                    if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
+                        request1 = event.text
+                        print(request, '\n')
+                        request = apiai.ApiAI(
+                            '').text_request()  # Токен API к Dialogflow
+                        request.lang = 'en'
+                        request.session_id = 'BatlabAIBot'  # ID Сессии диалога (нужно, чтобы потом учить бота)
+                        request.query = event.text  # Посылаем запрос к ИИ с сообщением от юзера
+                        responseJson = json.loads(request.getresponse().read().decode('utf-8'))
+                        response = responseJson['result']['fulfillment']['speech']  # Разбираем JSON и вытаскиваем ответ
+                        print(request, '\n')
+                        # Если есть ответ от бота - присылаем юзеру, если нет - бот его не понял
+                        if response:
+                            vk.messages.send(user_id=event.user_id, random_id=get_random_id(), message=response)
+                            break
+                        elif request1 == "Выйти из диалога":
+                            vk.messages.send(user_id=event.user_id, keyboard=keyboard, random_id=get_random_id(),
+                                             message='Good Luck!')
+                            break
+            elif request == "Выйти из диалога":
+                vk.messages.send(user_id=event.obj.from_id, keyboard=keyboard, random_id=get_random_id(),
+                                 message='Good Luck!')
+
+        elif event.type == VkBotEventType.MESSAGE_REPLY:
+            Message_Reply = open('D:\Projects\MassMessages.txt', 'a')
+            print('Исходящее сообщение: ', today.strftime("%H:%M %d.%m.%Y"), '\n',
+                  'Для: https://vk.com/id', event.obj.peer_id, '\n', 'Текст: ',
+                  event.obj.text, sep='', end='\n\n', file=Message_Reply)
+            Message_Reply.close()
+            print('Исходящее сообщение: ', today.strftime("%H:%M %d.%m.%Y"), '\n',
+                  'Для: https://vk.com/id', event.obj.peer_id, '\n', 'Текст: ',
+                  event.obj.text, sep='', end='\n\n')
+
+        elif event.type == VkBotEventType.GROUP_JOIN:
+            Join = open('D:\Projects\ListPerson_JOIN.txt', 'a')
+            print('Вступил в группу: ', today.strftime("%H:%M %d.%m.%Y"), '\n',
+                  'https://vk.com/id', event.object.user_id, sep='', end='\n\n', file=Join)
+            Join.close()
+            print('Вступил в группу: ', today.strftime("%H:%M %d.%m.%Y"), '\n',
+                  'https://vk.com/id', event.object.user_id, sep='', end='\n\n')
+
+        elif event.type == VkBotEventType.GROUP_LEAVE:
+            Leave = open('D:\Projects\ListPerson_LEAVE.txt', 'a')
+            print('Покинул группу: ', today.strftime("%H:%M %d.%m.%Y"), '\n',
+                  'https://vk.com/id', event.obj.user_id, sep='', end='\n\n', file=Leave)
+            Leave.close()
+            print('Покинул группу: ', today.strftime("%H:%M %d.%m.%Y"), '\n',
+                  'https://vk.com/id', event.obj.user_id, sep='', end='\n\n')
+
+if __name__ == '__main__':
+    mainlog()
