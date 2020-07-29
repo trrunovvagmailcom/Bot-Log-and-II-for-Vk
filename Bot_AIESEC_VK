@@ -10,9 +10,9 @@ import datetime
 ### Авторизация бота в группе
 ###
 
-vk_session = vk_api.VkApi(token='4d56e093b9fffd71cf9a5344a89e720ea2b247630b005bcdda933508b1c3a72ccec9c9a81a34670b99c5e')
+vk_session = vk_api.VkApi(token='4d56e093b9fffd71cf9a5344a**********c9a81a34670b99c5e')
 vk = vk_session.get_api()
-longpoll = VkBotLongPoll(vk_session, '32683970')
+longpoll = VkBotLongPoll(vk_session, '3***3970')
 longpollS = VkLongPoll(vk_session)
 session = requests.Session()
 
